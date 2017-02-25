@@ -17,6 +17,6 @@ def read():
 			res = response[0][1]
 			da.append(res[res.find(start)+len(start):res.find(end)].replace("\r\n",''))
 
-	print da
+	return da
 
 
