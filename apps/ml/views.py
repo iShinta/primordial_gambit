@@ -1,11 +1,5 @@
 from django.shortcuts import render
 import imaplib
-
-def index(request):
-	return render(request,'ml/index.html')
-
-def show(request):
-	return render(request,'ml/show.html')
 	
 def read():
 	imap = imaplib.IMAP4_SSL('imap.gmail.com')
