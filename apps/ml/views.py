@@ -1,6 +1,6 @@
 from django.shortcuts import render
 import imaplib
-
+	
 def read():
 	imap = imaplib.IMAP4_SSL('imap.gmail.com')
 	imap.login('primordialgambit@gmail.com', 'md5hackathon')
@@ -17,6 +17,6 @@ def read():
 			res = response[0][1]
 			da.append(res[res.find(start)+len(start):res.find(end)].replace("\r\n",''))
 
-	print da
+	return da
 
 
