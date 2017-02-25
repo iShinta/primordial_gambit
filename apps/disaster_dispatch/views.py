@@ -14,3 +14,9 @@ def refresh(request):
     response_data['message'] = "DUMMY MESSAGE"
     response_data['random'] = random.choice("HELLO_piZZza")
     return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+def resolve_incident(request):
+    if request.method == "POST":
+        pk = request.POST.id
+        MyModel.objects.filter(pk=pk).update(is_resolved=True)
+    return redirect("/")
