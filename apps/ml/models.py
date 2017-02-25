@@ -10,6 +10,7 @@ class Call(models.Model):
     location = models.CharField(max_length= 250)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    incident_id = models.ForeignKey(Incident, related_name="calls")
 
 
 
