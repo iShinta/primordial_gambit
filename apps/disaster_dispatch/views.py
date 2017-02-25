@@ -38,3 +38,9 @@ def read():
 			res = response[0][1]
 			da.append(res[res.find(start)+len(start):res.find(end)].replace("\r\n",''))
 	return da
+
+def resolve_incident(request):
+    if request.method == "POST":
+        pk = request.POST.id
+        MyModel.objects.filter(pk=pk).update(is_resolved=True)
+    return redirect("/")
