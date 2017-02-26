@@ -39,3 +39,16 @@
 .dummyDiv {
   min-height: 70vh;
 }
+
+.priorityCell {
+  text-align: center;
+}
+
+.dispatchTable {
+  max-height: 40vh;
+  overflow: auto;
+}
+
+.incidentTable {
+  margin-bottom: 20px;
+}

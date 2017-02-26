@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset="utf-8">
+    <title>Show Incident</title>
+    <meta name='description' content="Disaster Dispatch Aid">
+    {% load static %}
+    <link rel='stylesheet' type='text/css' href="{% static 'disaster_dispatch/css/styles.css' %}">
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <!-- bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  </head>
+  <body>
+    <div class='outerBody'>
+    <div class='container'>
+      <div class='row headerRow'>
+        <h1>Disaster Dispatch</h1>
+      </div><!-- header row -->
+
+      <div class='row incidentTable'>
+        <h2>Incident</h2>
+        <button class='btn btn-success pull-right'>Go Back</button>
+        
+        <table class='table table-striped table-hover'>
+          <thead>
+            <tr>
+              <th>Priority</th>
+              <th>Incident</th>
+              <th>Location</th>
+              <th>People Involved</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+
+          <tbody class='tableBody'>
+            <tr>
+              <td class='priorityCell'>{{ incident.priority }}</td>
+              <td>{{ incident.category }}</td>
+              <td>{{ incident.location }}</td>
+              <td>{{ incident.people }}</td>
+              <td>{{ incident.time | date }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div><!-- row incident table -->
+
+      <div class='row callsTable'>
+        <h2>Calls For This Incident</h2>
+        <table class='table table-striped table-hover'>
+          <thead>
+            <tr>
+              <th>Priority</th>
+              <th>Incident</th>
+              <th>Location</th>
+              <th>People Involved</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+
+          <tbody class='tableBody'>
+            {% for call in calls %}
+              <tr>
+                <td class='priorityCell'>{{ call.priority }}</td>
+                <td>{{ call.category }}</td>
+                <td>{{ call.location }}</td>
+                <td>{{ call.people }}</td>
+                <td>{{ call.time | date }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div><!-- row calls table -->
+
+
+      <div class='row footerDiv'>
+      </div><!-- footerDiv -->
+
+    </div><!-- container -->
+    </div><!-- outer body -->
+</body>
+</html>
