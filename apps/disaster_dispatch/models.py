@@ -9,7 +9,6 @@ from django.core import serializers
 class IncidentManager(models.Manager):
 
 	def people_affected(self,raw_text):
-		raw_text = 'there are 100 to 150 people here'
 		p_index = raw_text.find('people')
 		people = 0
 		if p_index:
@@ -23,22 +22,27 @@ class IncidentManager(models.Manager):
 		'flood': ['water', 'flooding'],
 		'natural disaster': ['avalanche', 'earth quake'],
 		}
+		raw_text = raw_text.split()
 		for word in raw_text:
 			for k in kw:
-					if word in kw[k]:
-							return k
+				if word in kw[k]:
+					print "*" * 50 , k
+					return k
 		return 'unknown'
 
 	def location(self,raw_text):
 		reg = re.compile(r"(?P<location>(.[0-9]+).{0,20}(lane|road|street))")
 		m =  re.search(reg,raw_text.lower())
-		m = m.groupdict()['location'].split()
-		m.extend(['austin','texas'])
-		m = "+".join([i for i in m])
-		url = 'https://maps.googleapis.com/maps/api/geocode/json'
-		params = {'sensor': 'false', 'address': m}
-		result = requests.get(url, params=params).json()['results'][0]['geometry']['location']
-		loc = [result['lng'],result['lat']]
+		try:
+			m = m.groupdict()['location'].split()
+			m.extend(['austin','texas'])
+			m = "+".join([i for i in m])
+			url = 'https://maps.googleapis.com/maps/api/geocode/json'
+			params = {'sensor': 'false', 'address': m}
+			result = requests.get(url, params=params).json()['results'][0]['geometry']['location']
+			loc = [result['lng'],result['lat']]
+		except:
+			loc = ''
 		return loc
 
 
@@ -46,16 +50,18 @@ class IncidentManager(models.Manager):
 		incidents = self.filter(is_resolved=False)
 		if len(incidents) != 0:
 			for incident in incidents:
-				location =  incident.location.replace("[","").replace("]","").split(',')
-				loc = [data['location'][0],data['location'][1],float(location[0]),float(location[1])]
-				distance = self.haversine(loc)
-				if distance <= 1.6  and incident['category'] == data['category']:
-					return Call.objects.create(raw_text=raw_text,people=data['people_affected'],location=data['location'],incident=incident)
+				location =  incident.location.replace("[","").replace("]","").split(',')				
+				if location[0] != '':
+					loc = [data['location'][0],data['location'][1],float(location[0]),float(location[1])]
+					distance = self.haversine(loc)
+					print '----------------------' , distance
+					if distance <= 1.6  and incident.category == data['category']:
+						return Call.objects.create(raw_text=raw_text,people=data['people_affected'],location=data['location'],incident=incident)
 		incident = self.create(priority = data['people_affected']+1,
 																			category = data['category'],
 																			location = data['location'],
 																			people = data['people_affected']
-		)		
+		)	
 		call = Call.objects.create(raw_text=raw_text,people=data['people_affected'],location=data['location'],incident=incident)
 		return 'new incedent added'
 
@@ -64,12 +70,10 @@ class IncidentManager(models.Manager):
 			'people_affected': self.people_affected(raw_text),
 			'category': self.category(raw_text),
 			'location': self.location(raw_text)
-		}
+		} 
 		self.create_incident(data,raw_text)
 	
 	def haversine(self,loc):
-		print type(loc[0])
-		print[type(i) for i in loc]
 		loc = [radians(float(i)) for i in loc]
 		dlon = loc[2] - loc[0] 
 		dlat = loc[3] - loc[1] 
