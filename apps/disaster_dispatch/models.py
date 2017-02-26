@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 import requests
-import simplejson
 from django.db import models
 from math import radians, cos, sin, asin, sqrt
 import re
