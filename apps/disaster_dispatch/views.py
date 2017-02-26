@@ -13,8 +13,6 @@ def index(request):
 
 def refresh(request):
     raw_text = read()
-    print '*' * 100
-    print raw_text
     if len(raw_text) > 0:
         for text in raw_text:
             Incident.objects.parse_text(text.translate(None, string.punctuation))
