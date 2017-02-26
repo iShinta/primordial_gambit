@@ -50,7 +50,7 @@ class IncidentManager(models.Manager):
 		incidents = self.filter(is_resolved=False)
 		if len(incidents) != 0:
 			for incident in incidents:
-				location =  incident.location.replace("[","").replace("]","").split(',')				
+				location =  incident.location.replace("[","").replace("]","").split(',')
 				if location[0] != '':
 					loc = [data['location'][0],data['location'][1],float(location[0]),float(location[1])]
 					distance = self.haversine(loc)
@@ -61,7 +61,7 @@ class IncidentManager(models.Manager):
 																			category = data['category'],
 																			location = data['location'],
 																			people = data['people_affected']
-		)	
+		)
 		call = Call.objects.create(raw_text=raw_text,people=data['people_affected'],location=data['location'],incident=incident)
 		return 'new incedent added'
 
@@ -70,15 +70,15 @@ class IncidentManager(models.Manager):
 			'people_affected': self.people_affected(raw_text),
 			'category': self.category(raw_text),
 			'location': self.location(raw_text)
-		} 
+		}
 		self.create_incident(data,raw_text)
-	
+
 	def haversine(self,loc):
 		loc = [radians(float(i)) for i in loc]
-		dlon = loc[2] - loc[0] 
-		dlat = loc[3] - loc[1] 
+		dlon = loc[2] - loc[0]
+		dlat = loc[3] - loc[1]
 		a = sin(dlat/2)**2 + cos(loc[1]) * cos(loc[3]) * sin(dlon/2)**2
-		c = 2 * asin(sqrt(a)) 
+		c = 2 * asin(sqrt(a))
 		km = 6367.0 * c
 		return km
 
@@ -94,7 +94,7 @@ class Incident(models.Model):
 	updated_at = models.DateTimeField(auto_now=True)
 	objects = IncidentManager()
 class Call(models.Model):
-	raw_text = models.TextField() 
+	raw_text = models.TextField()
 	# parsed_text = models.TextField()
 	people = models.IntegerField()
 	location = models.CharField(max_length= 250)
@@ -102,4 +102,3 @@ class Call(models.Model):
 	updated_at = models.DateTimeField(auto_now=True)
 	incident = models.ForeignKey(Incident, related_name="calls")
 	# objects = IncidentManager()
-	
