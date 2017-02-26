@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Disaster Dispatch</title>
+
     <meta name='description' content="Disaster Dispatch Aid">
     {% load static %}
     <link rel='stylesheet' type='text/css' href="{% static 'disaster_dispatch/css/styles.css' %}">
@@ -25,7 +26,7 @@
     <div class='outerBody'>
     <div class='container'>
       <div class='row headerRow'>
-        <h1>Disaster Dispatch</h1>
+        <h1>Emergency Response AI</h1>
       </div><!-- header row -->
 
       <div class='row dispatchTable'>
@@ -37,77 +38,27 @@
               <th>Location</th>
               <th>People Involved</th>
               <th>Time</th>
+              <th>All Calls</th>
               <th>Action</th>
             </tr>
           </thead>
 
           <tbody class='tableBody'>
-            <!-- dummy data delete -->
-            <!-- <tr>
-              <td>1</td>
-              <td>Forest Fire</td>
-              <td>Yosemite Park</td>
-              <td>50 families stuck in middle</td>
-              <td>Feb 25, 2017 5:00PM</td>
-              <td><button class='btn btn-danger'>Resolved</button></td>
-            </tr>
 
-            <tr>
-              <td>2</td>
-              <td>Hostage situation</td>
-              <td>Town Hall</td>
-              <td>200 civilians</td>
-              <td>Feb 25, 2017 6:00PM</td>
-              <td><button class='btn btn-danger'>Resolved</button></td>
-            </tr>
-
-            <tr>
-              <td>3</td>
-              <td>Tordado destruction</td>
-              <td>Oklahoma City</td>
-              <td>30 families shelterless</td>
-              <td>Feb 25, 2017 6:00PM</td>
-              <td><button class='btn btn-danger'>Resolved</button></td>
-            </tr>
-
-            <tr>
-              <td>4</td>
-              <td>Bomb threat</td>
-              <td>South Park Elementary</td>
-              <td>10 children stuck in gym</td>
-              <td>Feb 25, 2017 7:00PM</td>
-              <td><button class='btn btn-danger'>Resolved</button></td>
-            </tr>
-
-            <tr>
-              <td>5</td>
-              <td>Mass shooting at airport</td>
-              <td>LAX Airport</td>
-              <td>12 casualties, 20 injured</td>
-              <td>Feb 25, 2017 8:00PM</td>
-              <td><button class='btn btn-danger'>Resolved</button></td>
-            </tr> -->
-
-
-            {% for incident in incidents %}
+            <!-- {% for incident in incidents %}
               <tr class='showIncident' id='pk'>
                 <td class='priorityCell'>{{ incident.priority }}</td>
                 <td>{{ incident.category }}</td>
-                <td>{{ incident.location }}</td>
+                <td>{{ incident.address }}</td>
                 <td>{{ incident.people }}</td>
-                <td>{{ incident.time | date }}</td>
+                <td>{{ incident.created_at | date }}</td>
                 <td><form action='/resolve/' method='POST'>{% csrf_token %}<input type='hidden' name='pk' value="{{ incident.pk }}"><input class='btn btn-danger' type='submit' value='Resolved' ></form></td>
               </tr>
-            {% endfor %}
+            {% endfor %} -->
 
           </tbody>
         </table>
       </div><!-- row dispatch table -->
-
-      <!-- <div class='row dummyDiv'>
-        <p class='dummy'></p>
-      </div> -->
-
 
       <div class='row footerDiv'>
       </div><!-- footerDiv -->
@@ -116,52 +67,40 @@
     </div><!-- outer body -->
 
     <script>
-      // (function refresh(){
-      //   $.ajax({
-      //     url: '/refresh',
-      //     success: function(returnedData){
-      //       console.log(JSON.parse(returnedData));
-      //       if (returnedData.length > 1) {
-      //         for (var i = 0, j=returnedData.length; i<j; i++) {
-      //
-      //             var priority = returnedData[i]['priority'],
-      //                 category = returnedData[i]['category'],
-      //                 location = returnedData[i]['location'],
-      //                 people = returnedData[i]['people'],
-      //                 time = returnedData[i]['created_at'],
-      //                 pk = returnedData[i]['pk'],
-      //                 table_row = "<tr class='showIncident' id='pk'>";
-      //
-      //                 table_row += "<td class='priorityCell'>"+priority+"</td>";
-      //                 table_row += "<td>"+category+"</td>";
-      //                 table_row += "<td>"+location+"</td>";
-      //                 table_row += "<td>"+people+"</td>";
-      //                 table_row += "<td>"+time+"</td>";
-      //                 table_row += "<td><form action='/resolve/' method='POST'>{% csrf_token %}<input type='hidden' name='pk' value="+pk+"><input class='btn btn-danger' type='submit' value='Resolved' ></form></td>";
-      //                 table_row += "</tr>";
-      //
-      //                 $(".tableBody").append(table_row);
-      //         }
-      //       } else {
-      //         console.log("No incidents!");
-      //       }
-      //     },
-      //     complete: function(){
-      //       setTimeout(refresh, 5000);
-      //     }
-      //   })
-      // })();
+    (function refresh(){
+      $.ajax({
+        url: '/refresh',
+        success: function(returnedData){
+          data = $.parseJSON(returnedData)
+          var t='';
+          for (var i =0; i<data.length; i++) {
+            var pk = data[i]['pk']
+            t+="<tr class='showIncident' id="+pk+"><td>"+data[i].fields['priority']+'</td>'
+            t+='<td>'+data[i].fields['category']+'</td>'
+            t+='<td>'+data[i].fields['address'].split('+').join(" ")+'</td>'
+            t+='<td>'+data[i].fields['people']+'</td>'
+            t+='<td>'+data[i].fields['created_at']+'</td>'
+            t+="<td><a href='show/"+pk+"' class='btn btn-primary'>All Calls</a></td>"
+            t+="<td><form action='/resolve/' method='POST'>{% csrf_token %}<input type='hidden' name='pk' value="+data[i]['pk']+"><input class='btn btn-danger' type='submit' value='Resolved' ></form></td></tr>"
+          }
+          $("tbody").html(t);
+        },
+        complete: function(){
+          setTimeout(refresh, 5000);
+        }
+        // .strftime("%b %d,%y %x")
+      })
+      })();
 
       //click incident to show
-      $('.showIncident').on('click', function(){
-        var incident_id = this.id;
-
-        console.log(incident_id);
-
-        $.get('/show/'+incident_id, function(returnedData){
-          console.log(returnedData);
-        })
-      });
+      // $(document).on('click', '.showIncident', function(){
+      //   var incident_id = $(this).attr('id');
+      //   console.log("id", incident_id);
+      //
+      //   $.get('/show/'+incident_id, function(returnedData){
+      //     console.log(JSON.parse(returnedData));
+      //   }, 'json')
+      // });
 
 
     </script>
