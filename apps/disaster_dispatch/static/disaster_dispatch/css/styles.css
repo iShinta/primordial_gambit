@@ -40,9 +40,9 @@
   min-height: 70vh;
 }
 
-.priorityCell {
+/*.priorityCell {
   text-align: center;
-}
+}*/
 
 .dispatchTable {
   max-height: 40vh;
@@ -50,5 +50,13 @@
 }
 
 .incidentTable {
-  margin-bottom: 20px;
+  /*margin-bottom: 20px;*/
+}
+
+.backButton {
+
+}
+
+.marginSpan {
+  margin-right: 10px;
 }

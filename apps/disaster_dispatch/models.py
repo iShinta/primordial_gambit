@@ -7,14 +7,14 @@ from django.core import serializers
 
 class IncidentManager(models.Manager):
 
-	def people_affected(self,raw_text):
+    def people_affected(self,raw_text):
 		p_index = raw_text.find('people')
 		people = 0
 		if p_index:
 			people = max([int(s) for s in raw_text[max(0,p_index-20):p_index].split() if s.isdigit()])
 		return people
 
-	def category(self,raw_text):
+    def category(self,raw_text):
 		kw = {
 		'fire' : ['fire', 'buring', 'burn','smoke'],
 		'shooting': ['shots fired', 'shooting', 'gun fire'],
@@ -29,7 +29,7 @@ class IncidentManager(models.Manager):
 					return k
 		return 'unknown'
 
-	def location(self,raw_text):
+    def location(self,raw_text):
 		reg = re.compile(r"(?P<location>(.[0-9]+).{0,20}(lane|road|street))")
 		m =  re.search(reg,raw_text.lower())
 		try:
@@ -42,37 +42,42 @@ class IncidentManager(models.Manager):
 			loc = [result['lng'],result['lat']]
 		except:
 			loc = ''
-		return loc
+		return loc, m
 
 
-	def create_incident(self,data,raw_text):
-		incidents = self.filter(is_resolved=False)
-		if len(incidents) != 0:
-			for incident in incidents:
-				location =  incident.location.replace("[","").replace("]","").split(',')
-				if location[0] != '':
-					loc = [data['location'][0],data['location'][1],float(location[0]),float(location[1])]
-					distance = self.haversine(loc)
-					print '----------------------' , distance
-					if distance <= 1.6  and incident.category == data['category']:
-						return Call.objects.create(raw_text=raw_text,people=data['people_affected'],location=data['location'],incident=incident)
-		incident = self.create(priority = data['people_affected']+1,
+    def create_incident(self,data,raw_text):
+    	incidents = self.filter(is_resolved=False)
+    	if len(incidents) != 0:
+    		for incident in incidents:
+    			location =  incident.location.replace("[","").replace("]","").split(',')
+    			if location[0] != '':
+                    loc = [data['location'][0],data['location'][1],float(location[0]),float(location[1])]
+                    print loc
+                    distance = self.haversine(loc)
+                    print '----------------------' , distance
+                    if distance <= 1.6  and incident.category == data['category']:
+                    	return Call.objects.create(raw_text=raw_text,people=data['people_affected'],location=data['location'],incident=incident)
+    	incident = self.create(priority = data['people_affected']+1,
 																			category = data['category'],
 																			location = data['location'],
-																			people = data['people_affected']
+																			people = data['people_affected'],
+                                                                            address = data['address']
 		)
 		call = Call.objects.create(raw_text=raw_text,people=data['people_affected'],location=data['location'],incident=incident)
 		return 'new incedent added'
 
-	def parse_text(self,raw_text):
-		data = {
-			'people_affected': self.people_affected(raw_text),
-			'category': self.category(raw_text),
-			'location': self.location(raw_text)
-		}
-		self.create_incident(data,raw_text)
+    def parse_text(self,raw_text):
+        location, address = self.location(raw_text)
 
-	def haversine(self,loc):
+        data = {
+        	'people_affected': self.people_affected(raw_text),
+        	'category': self.category(raw_text),
+        	'location': location,
+            'address': address
+        }
+        self.create_incident(data,raw_text)
+
+    def haversine(self,loc):
 		loc = [radians(float(i)) for i in loc]
 		dlon = loc[2] - loc[0]
 		dlat = loc[3] - loc[1]
@@ -84,14 +89,15 @@ class IncidentManager(models.Manager):
 
 # Create your models here.
 class Incident(models.Model):
-	priority = models.IntegerField()
-	people = models.IntegerField()
-	is_resolved = models.BooleanField(default=False)
-	category = models.CharField(max_length= 30)
-	location = models.CharField(max_length= 250)
-	created_at = models.DateTimeField(auto_now_add=True)
-	updated_at = models.DateTimeField(auto_now=True)
-	objects = IncidentManager()
+    priority = models.IntegerField()
+    people = models.IntegerField()
+    is_resolved = models.BooleanField(default=False)
+    category = models.CharField(max_length= 30)
+    location = models.CharField(max_length= 250)
+    address = models.CharField(max_length= 250)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    objects = IncidentManager()
 class Call(models.Model):
 	raw_text = models.TextField()
 	# parsed_text = models.TextField()
