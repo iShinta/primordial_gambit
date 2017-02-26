@@ -89,13 +89,24 @@
             </tr> -->
 
 
+            {% for incident in incidents %}
+              <tr class='showIncident' id='pk'>
+                <td class='priorityCell'>{{ incident.priority }}</td>
+                <td>{{ incident.category }}</td>
+                <td>{{ incident.location }}</td>
+                <td>{{ incident.people }}</td>
+                <td>{{ incident.time | date }}</td>
+                <td><form action='/resolve/' method='POST'>{% csrf_token %}<input type='hidden' name='pk' value="{{ incident.pk }}"><input class='btn btn-danger' type='submit' value='Resolved' ></form></td>
+              </tr>
+            {% endfor %}
+
           </tbody>
         </table>
       </div><!-- row dispatch table -->
 
-      <div class='row dummyDiv'>
+      <!-- <div class='row dummyDiv'>
         <p class='dummy'></p>
-      </div>
+      </div> -->
 
 
       <div class='row footerDiv'>
@@ -105,41 +116,41 @@
     </div><!-- outer body -->
 
     <script>
-      (function refresh(){
-        $.ajax({
-          url: '/refresh',
-          success: function(returnedData){
-            console.log(JSON.parse(returnedData));
-            if (returnedData.length > 1) {
-              for (var i = 0, j=returnedData.length; i<j; i++) {
-
-                  var priority = returnedData[i]['priority'],
-                      category = returnedData[i]['category'],
-                      location = returnedData[i]['location'],
-                      people = returnedData[i]['people'],
-                      time = returnedData[i]['created_at'],
-                      pk = returnedData[i]['pk'],
-                      table_row = "<tr class='showIncident' id='pk'>";
-
-                      table_row += "<td class='priorityCell'>"+priority+"</td>";
-                      table_row += "<td>"+category+"</td>";
-                      table_row += "<td>"+location+"</td>";
-                      table_row += "<td>"+people+"</td>";
-                      table_row += "<td>"+time+"</td>";
-                      table_row += "<td><form action='/resolve/' method='POST'>{% csrf_token %}<input type='hidden' name='pk' value="+pk+"><input class='btn btn-danger' type='submit' value='Resolved' ></form></td>";
-                      table_row += "</tr>";
-
-                      $(".tableBody").append(table_row);
-              }
-            } else {
-              console.log("No incidents!");
-            }
-          },
-          complete: function(){
-            setTimeout(refresh, 5000);
-          }
-        })
-      })();
+      // (function refresh(){
+      //   $.ajax({
+      //     url: '/refresh',
+      //     success: function(returnedData){
+      //       console.log(JSON.parse(returnedData));
+      //       if (returnedData.length > 1) {
+      //         for (var i = 0, j=returnedData.length; i<j; i++) {
+      //
+      //             var priority = returnedData[i]['priority'],
+      //                 category = returnedData[i]['category'],
+      //                 location = returnedData[i]['location'],
+      //                 people = returnedData[i]['people'],
+      //                 time = returnedData[i]['created_at'],
+      //                 pk = returnedData[i]['pk'],
+      //                 table_row = "<tr class='showIncident' id='pk'>";
+      //
+      //                 table_row += "<td class='priorityCell'>"+priority+"</td>";
+      //                 table_row += "<td>"+category+"</td>";
+      //                 table_row += "<td>"+location+"</td>";
+      //                 table_row += "<td>"+people+"</td>";
+      //                 table_row += "<td>"+time+"</td>";
+      //                 table_row += "<td><form action='/resolve/' method='POST'>{% csrf_token %}<input type='hidden' name='pk' value="+pk+"><input class='btn btn-danger' type='submit' value='Resolved' ></form></td>";
+      //                 table_row += "</tr>";
+      //
+      //                 $(".tableBody").append(table_row);
+      //         }
+      //       } else {
+      //         console.log("No incidents!");
+      //       }
+      //     },
+      //     complete: function(){
+      //       setTimeout(refresh, 5000);
+      //     }
+      //   })
+      // })();
 
       //click incident to show
       $('.showIncident').on('click', function(){
