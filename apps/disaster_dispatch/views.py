@@ -9,7 +9,28 @@ from django.core import serializers
 
 # Create your views here.
 def index(request):
-    return render(request, 'disaster_dispatch/index.html')
+    raw_text = read()
+    if len(raw_text) > 0:
+        for text in raw_text:
+            Incident.objects.parse_text(text.translate(None, string.punctuation))
+    all_incidents = Incident.objects.filter(is_resolved=False).order_by('priority')
+    # all_incidents = serializers.serialize('json',all_incidents)
+
+    context_dictionary = {}
+    context_dictionary['incidents'] = []
+
+    for incident in all_incidents:
+        incidents_dict = {
+            "pk" : incident.pk,
+            "priority": incident.priority,
+            "location": incident.location,
+            "category": incident.category,
+            "people": incident.people,
+            "created_at": incident.created_at
+        }
+
+        context_dictionary['incidents'].append(incidents_dict)
+    return render(request, 'disaster_dispatch/index.html', context_dictionary)
 
 def refresh(request):
     raw_text = read()
@@ -17,7 +38,21 @@ def refresh(request):
         for text in raw_text:
             Incident.objects.parse_text(text.translate(None, string.punctuation))
     all_incidents = Incident.objects.filter(is_resolved=False).order_by('priority')
-    all_incidents = serializers.serialize('json',all_incidents)
+    # all_incidents = serializers.serialize('json',all_incidents)
+
+    incidents_output = []
+
+    for incident in all_incidents:
+        incidents_dict = {
+            "pk" : incident.pk,
+            "priority": incident.priority,
+            "location": incident.location,
+            "category": incident.category,
+            "people": incident.people,
+            "created_at": incident.created_at
+        }
+
+        incidents_output.append(incidents_dict)
     return HttpResponse(json.dumps(all_incidents), content_type="application/json")
 
 
