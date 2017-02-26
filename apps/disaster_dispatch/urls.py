@@ -6,5 +6,6 @@ urlpatterns = [
     # url(r'^admin/', admin.site.urls),
     url(r'^$', views.index),
     url(r'^refresh/$', views.refresh),
-    url(r'^resolve/$',views.resolve_incident)
+    url(r'^resolve/$', views.resolve_incident),
+    url(r'^show/(?P<id>\d+)/$', views.show)
 ]

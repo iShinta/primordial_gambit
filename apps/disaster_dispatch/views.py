@@ -20,7 +20,7 @@ def refresh(request):
     all_incidents = serializers.serialize('json',all_incidents)
     return HttpResponse(json.dumps(all_incidents), content_type="application/json")
 
-	
+
 def read():
 	imap = imaplib.IMAP4_SSL('imap.gmail.com')
 	imap.login('primordialgambit@gmail.com', 'md5hackathon')
@@ -39,6 +39,12 @@ def read():
 
 def resolve_incident(request):
     if request.method == "POST":
-        pk = request.POST.id
-        MyModel.objects.filter(pk=pk).update(is_resolved=True)
+        pk = request.POST.pk
+        Incident.objects.get(pk=pk).update(is_resolved=True)
     return redirect("/")
+
+def show(request, id):
+    context_object = {}
+    context_object['incident'] = Incident.objects.get(pk=id)
+    context_object['calls'] = Call.objects.filter(incident=context_object['incident'])
+    return render(request, 'disaster_dispatch/show.html', context_object)

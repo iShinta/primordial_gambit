@@ -1,0 +1,54 @@
+.headerRow {
+  height: 300px;
+  background-image: url('../images/disaster_dispatch_banner_resized_high_res.png');
+  repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  justify-content: column;
+  align-items: flex-end;
+}
+
+.headerRow h1{
+  margin-left: 20px;
+  font-size: 5em;
+  color: white;
+  text-shadow: 5px 0 8px rgba(0,0,0,0.5);
+}
+
+.outerBody {
+  background-image: url("../images/concrete-bg.png");
+  background-size: cover;
+  min-height: 100vh;
+  min-width: 100%;
+}
+
+.container {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.footerDiv {
+  background-image: -webkit-linear-gradient(transparent, rgba(0, 3, 124, 0.67)), url("../images/disaster_dispatch_footer.png");
+  background-image: -moz-linear-gradient(transparent, rgba(0, 3, 124, 0.67)), url("../images/disaster_dispatch_footer.png");
+  background-image: -ms-linear-gradient(transparent, rgba(0, 3, 124, 0.67)), url("../images/disaster_dispatch_footer.png");
+  background-image: -o-linear-gradient(transparent, rgba(0, 3, 124, 0.67)), url("../images/disaster_dispatch_footer.png");
+  background-image: linear-gradient(transparent, rgba(0, 3, 124, 0.67)), url("../images/disaster_dispatch_footer.png");
+  height: 300px;
+  background-size: cover;
+}
+
+.dummyDiv {
+  min-height: 70vh;
+}
+
+.priorityCell {
+  text-align: center;
+}
+
+.dispatchTable {
+  max-height: 40vh;
+  overflow: auto;
+}
+
+.incidentTable {
+  margin-bottom: 20px;
+}
